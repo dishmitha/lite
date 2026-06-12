@@ -1,11 +1,11 @@
 import streamlit as st
-import pandas as pd
 import joblib
+import pandas as pd
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="Smart Crop Recommendation",
-    page_icon="🌱",
+    page_icon="🌾",
     layout="wide"
 )
 
@@ -19,10 +19,10 @@ try:
     pipeline = model_data["pipeline"]
     label_encoder = model_data["label_encoder"]
 except Exception as e:
-    st.error(f"Error loading model: {e}")
+    st.error(f"Model Loading Error: {e}")
     st.stop()
 
-# ---------------- CUSTOM CSS ----------------
+# ---------------- CSS ----------------
 st.markdown("""
 <style>
 
@@ -33,107 +33,93 @@ html, body, [class*="css"]{
 }
 
 .stApp{
-background: linear-gradient(
-135deg,
-#0f172a 0%,
-#14532d 50%,
-#052e16 100%
-);
+background-image:url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1600&q=80");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 }
 
-/* Hide Streamlit menu */
-#MainMenu {visibility:hidden;}
-footer {visibility:hidden;}
-header {visibility:hidden;}
-
-/* Hero */
-.hero{
-padding:25px;
+.main-container{
+background:rgba(0,0,0,0.55);
+padding:30px;
 border-radius:25px;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,0.1);
-margin-bottom:20px;
+backdrop-filter:blur(12px);
 }
 
-.hero-title{
-font-size:55px;
+.title{
+font-size:58px;
 font-weight:700;
-color:white;
 text-align:center;
+color:white;
 }
 
-.hero-sub{
+.subtitle{
 font-size:18px;
 text-align:center;
-color:#cbd5e1;
+color:#f1f5f9;
+margin-bottom:25px;
 }
 
-/* Cards */
-.card{
-background:rgba(255,255,255,0.08);
-padding:20px;
+.result{
+background:linear-gradient(135deg,#22c55e,#15803d);
+padding:25px;
 border-radius:20px;
-backdrop-filter:blur(12px);
-border:1px solid rgba(255,255,255,0.1);
+text-align:center;
+font-size:32px;
+font-weight:700;
+color:white;
+margin-top:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
-/* Labels */
-label{
+.crop-card{
+background:rgba(255,255,255,0.1);
+padding:15px;
+border-radius:15px;
+backdrop-filter:blur(10px);
+}
+
+h1,h2,h3,label{
 color:white !important;
-font-weight:600 !important;
 }
 
-/* Inputs */
-.stNumberInput input{
-background:#f8fafc !important;
-color:#0f172a !important;
-border-radius:12px !important;
-font-size:18px !important;
-font-weight:600 !important;
-}
-
-/* Button */
-.stButton button{
+div.stButton > button{
 width:100%;
 height:60px;
 border:none;
 border-radius:15px;
-background:linear-gradient(135deg,#22c55e,#16a34a);
+background:linear-gradient(90deg,#16a34a,#22c55e);
 color:white;
 font-size:20px;
-font-weight:700;
+font-weight:600;
 }
 
-/* Result */
-.result{
-background:linear-gradient(135deg,#22c55e,#15803d);
-padding:30px;
-border-radius:20px;
-text-align:center;
-font-size:35px;
-font-weight:700;
-color:white;
-margin-top:20px;
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
+div.stButton > button:hover{
+transform:scale(1.02);
 }
+
+[data-testid="stNumberInput"] label{
+font-weight:600;
+color:white;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- HEADER ----------------
 st.markdown("""
-<div class="hero">
-<div class="hero-title">🌱 Smart Crop Recommendation</div>
-<div class="hero-sub">
-AI Powered Farming Assistant for Better Yield & Smart Agriculture
+<div class="main-container">
+<div class="title">🌱 Smart Crop Recommendation</div>
+<div class="subtitle">
+AI-Based Crop Prediction Using Soil Nutrients & Weather Conditions
 </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------- INPUT CARD ----------------
-st.markdown('<div class="card">', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
-st.subheader("🌾 Soil & Weather Parameters")
+# ---------------- INPUTS ----------------
+st.markdown("## 🌾 Enter Farm Details")
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -160,40 +146,41 @@ with col6:
 with col7:
     rainfall = st.number_input("Rainfall (mm)", value=202.0)
 
-if st.button("🚀 Recommend Best Crop"):
-    st.write("Button works!")
-
-st.markdown('</div>', unsafe_allow_html=True)
+predict = st.button("🚀 Recommend Best Crop")
 
 # ---------------- FEATURED CROPS ----------------
-st.markdown("<br>", unsafe_allow_html=True)
-
-st.subheader("🌾 Popular Crops")
+st.markdown("---")
+st.markdown("## 🌾 Featured Crops")
 
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
     st.image(
-        "https://images.unsplash.com/photo-1536657464919-892534f60d6e",
+        "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=500&q=80",
         use_container_width=True
     )
-    st.caption("Rice")
+    st.markdown("### Rice")
 
 with c2:
     st.image(
-        "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b",
+        "https://images.unsplash.com/photo-1601597111158-2fceff292cdc?auto=format&fit=crop&w=500&q=80",
         use_container_width=True
     )
-    st.caption("Wheat")
-
-
+    st.markdown("### Wheat")
 
 with c3:
     st.image(
-        "https://images.unsplash.com/photo-1464226184884-fa280b87c399",
+        "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=500&q=80",
         use_container_width=True
     )
-    st.caption("Cotton")
+    st.markdown("### Maize")
+
+with c4:
+    st.image(
+        "https://images.unsplash.com/photo-1592928302636-c83cf1e1f6f3?auto=format&fit=crop&w=500&q=80",
+        use_container_width=True
+    )
+    st.markdown("### Cotton")
 
 # ---------------- PREDICTION ----------------
 if predict:
