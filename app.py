@@ -196,29 +196,33 @@ with c3:
 
 # ---------------- PREDICTION ----------------
 if predict:
+    try:
+        sample = pd.DataFrame([{
+            "N": float(N),
+            "P": float(P),
+            "K": float(K),
+            "temperature": float(temperature),
+            "humidity": float(humidity),
+            "ph": float(ph),
+            "rainfall": float(rainfall)
+        }])
 
-    sample = pd.DataFrame([{
-        "N": N,
-        "P": P,
-        "K": K,
-        "temperature": temperature,
-        "humidity": humidity,
-        "ph": ph,
-        "rainfall": rainfall
-    }])
+        prediction = pipeline.predict(sample)
 
-    prediction = pipeline.predict(sample)
-    crop = label_encoder.inverse_transform(prediction)[0]
+        crop = label_encoder.inverse_transform(prediction)[0]
 
-    st.markdown(
-        f"""
-        <div class="result">
-        🌾 Recommended Crop<br><br>
-        {crop.upper()}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        st.markdown(
+            f"""
+            <div class="result">
+            🌾 Recommended Crop<br><br>
+            {crop.upper()}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-   
+        
+
+    except Exception as e:
+        st.error(f"Prediction Error: {e}")   
 
