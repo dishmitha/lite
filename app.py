@@ -59,8 +59,8 @@ def train_model(X: pd.DataFrame, y: pd.Series):
     return model, label_encoder
 
 
-def save_model(model, label_encoder, path: str):
-    payload = {"pipeline": model, "label_encoder": label_encoder}
+def save_model(model, label_encoder, feature_names, path: str):
+    payload = {"pipeline": model, "label_encoder": label_encoder, "feature_names": list(feature_names)}
     joblib.dump(payload, path)
     print(f"Saved trained model to '{path}'")
 
@@ -75,7 +75,15 @@ def predict_crop(sample: dict, model_payload: dict) -> str:
     model = model_payload["pipeline"]
     label_encoder = model_payload["label_encoder"]
 
+    feature_names = model_payload.get("feature_names")
     sample_df = pd.DataFrame([sample])
+    if feature_names is not None:
+        missing = [c for c in feature_names if c not in sample_df.columns]
+        if missing:
+            raise ValueError(f"Missing feature(s) for prediction: {missing}")
+        # Reorder columns to match training
+        sample_df = sample_df[feature_names]
+
     prediction = model.predict(sample_df)
     return label_encoder.inverse_transform(prediction)[0]
 
@@ -84,7 +92,7 @@ def main():
     df = load_dataset(DATA_PATH)
     X, y = prepare_data(df)
     model, label_encoder = train_model(X, y)
-    save_model(model, label_encoder, MODEL_PATH)
+    save_model(model, label_encoder, X.columns, MODEL_PATH)
 
     example_input = {
         "N": 90,
