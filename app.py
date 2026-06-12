@@ -160,7 +160,8 @@ with col6:
 with col7:
     rainfall = st.number_input("Rainfall (mm)", value=202.0)
 
-predict = st.button("🚀 Recommend Best Crop")
+if st.button("🚀 Recommend Best Crop"):
+    st.write("Button works!")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
