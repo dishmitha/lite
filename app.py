@@ -198,19 +198,20 @@ if st.button("🚀 Recommend Best Crop"):
     crop = label_encoder.inverse_transform(prediction)[0]
 
     st.markdown(f"""
-    <div style="
-    background:linear-gradient(135deg,#f59e0b,#f97316);
-    padding:30px;
-    border-radius:25px;
-    text-align:center;
-    margin-top:25px;
-    box-shadow:0px 8px 30px rgba(0,0,0,0.25);
-    ">
-    <h2 style="color:white;">🌾 Recommended Crop</h2>
-    <h1 style="color:white;font-size:50px;">
-    {crop.upper()}
-    </h1>
-    </div>
-    """, unsafe_allow_html=True)
+<div style="
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,0.1);
+padding:30px;
+border-radius:25px;
+text-align:center;
+margin-top:25px;
+">
+<h2 style="color:#86efac;">🌾 Recommended Crop</h2>
+<h1 style="color:white;font-size:60px;">
+{crop.upper()}
+</h1>
+</div>
+""", unsafe_allow_html=True)
 
    
