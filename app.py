@@ -195,33 +195,36 @@ with c3:
     )
     st.caption("Cotton")
 
+# ---------------- PREDICTION ----------------
 if predict:
-    st.write("Button Clicked ✅")
+    sample = pd.DataFrame([{
+        "N": N,
+        "P": P,
+        "K": K,
+        "temperature": temperature,
+        "humidity": humidity,
+        "ph": ph,
+        "rainfall": rainfall
+    }])
 
-    try:
-        sample = pd.DataFrame([{
-            "N": N,
-            "P": P,
-            "K": K,
-            "temperature": temperature,
-            "humidity": humidity,
-            "ph": ph,
-            "rainfall": rainfall
-        }])
+    prediction = pipeline.predict(sample)
+    crop = label_encoder.inverse_transform(prediction)[0]
 
-        st.write("Input Data:")
-        st.dataframe(sample)
+    st.markdown(
+        f"""
+        <div class="result">
+        🌾 Recommended Crop<br><br>
+        {crop.upper()}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        prediction = pipeline.predict(sample)
+    st.balloons()
 
-        st.write("Raw Prediction:", prediction)
-
-        crop = label_encoder.inverse_transform(prediction)[0]
-
-        st.success(f"Recommended Crop: {crop}")
-
-    except Exception as e:
-        st.error(f"ERROR: {str(e)}")
-    except Exception as e:
-        st.error(f"Prediction Error: {e}")   
-
+# ---------------- FOOTER ----------------
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown(
+    "<center style='color:white;font-size:16px;'>🚜 Built with Machine Learning & Streamlit</center>",
+    unsafe_allow_html=True
+)
