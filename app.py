@@ -168,4 +168,4 @@ if st.button("🚀 Recommend Crop"):
 
     st.success(f"🌾 Recommended Crop: {crop.upper()}")
 
-    st.balloons()
+   
