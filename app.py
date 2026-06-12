@@ -185,14 +185,9 @@ with c2:
     )
     st.caption("Wheat")
 
-with c3:
-    st.image(
-        "https://images.unsplash.com/photo-1601593768799-76d1b0fd4a4b",
-        use_container_width=True
-    )
-    st.caption("Maize")
 
-with c4:
+
+with c3:
     st.image(
         "https://images.unsplash.com/photo-1464226184884-fa280b87c399",
         use_container_width=True
@@ -225,11 +220,5 @@ if predict:
         unsafe_allow_html=True
     )
 
-    st.balloons()
+   
 
-# ---------------- FOOTER ----------------
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown(
-    "<center style='color:#cbd5e1'>Built with ❤️ using Machine Learning & Streamlit</center>",
-    unsafe_allow_html=True
-)
