@@ -194,35 +194,33 @@ with c3:
     )
     st.caption("Cotton")
 
-# ---------------- PREDICTION ----------------
 if predict:
+    st.write("Button Clicked ✅")
+
     try:
         sample = pd.DataFrame([{
-            "N": float(N),
-            "P": float(P),
-            "K": float(K),
-            "temperature": float(temperature),
-            "humidity": float(humidity),
-            "ph": float(ph),
-            "rainfall": float(rainfall)
+            "N": N,
+            "P": P,
+            "K": K,
+            "temperature": temperature,
+            "humidity": humidity,
+            "ph": ph,
+            "rainfall": rainfall
         }])
+
+        st.write("Input Data:")
+        st.dataframe(sample)
 
         prediction = pipeline.predict(sample)
 
+        st.write("Raw Prediction:", prediction)
+
         crop = label_encoder.inverse_transform(prediction)[0]
 
-        st.markdown(
-            f"""
-            <div class="result">
-            🌾 Recommended Crop<br><br>
-            {crop.upper()}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.success(f"Recommended Crop: {crop}")
 
-        
-
+    except Exception as e:
+        st.error(f"ERROR: {str(e)}")
     except Exception as e:
         st.error(f"Prediction Error: {e}")   
 
