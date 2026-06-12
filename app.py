@@ -2,16 +2,15 @@ import streamlit as st
 import joblib
 import pandas as pd
 
+# Page Config
 st.set_page_config(
-page_title="Smart Crop Recommendation",
-page_icon="🌱",
-layout="wide"
+    page_title="Smart Crop Recommendation",
+    page_icon="🌱",
+    layout="wide"
 )
 
-# ---------- CUSTOM CSS ----------
-
+# Custom CSS
 st.markdown("""
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -80,96 +79,94 @@ div.stButton > button:hover{
     transform:scale(1.02);
 }
 </style>
-
 """, unsafe_allow_html=True)
 
-# ---------- HEADER ----------
-
-st.markdown("<div class='main-title'>🌱 Smart Crop Recommendation System</div>", unsafe_allow_html=True)
-
+# Header
 st.markdown(
-"<div class='subtitle'>AI Powered Crop Prediction using Soil & Weather Parameters</div>",
-unsafe_allow_html=True
-)
-
-# ---------- LOAD MODEL ----------
-
-model_data = joblib.load("crop_recommendation_model.joblib")
-
-pipeline = model_data["pipeline"]
-label_encoder = model_data["label_encoder"]
-
-# ---------- LAYOUT ----------
-
-col1, col2 = st.columns([1.2,1])
-
-with col1:
-
-```
-st.markdown("<div class='glass'>", unsafe_allow_html=True)
-
-st.subheader("🌾 Enter Farm Details")
-
-N = st.slider("Nitrogen (N)",0,140,90)
-P = st.slider("Phosphorus (P)",0,140,42)
-K = st.slider("Potassium (K)",0,140,43)
-
-temperature = st.number_input("🌡 Temperature (°C)", value=20.8)
-humidity = st.number_input("💧 Humidity (%)", value=82.0)
-ph = st.number_input("⚗ Soil pH", value=6.5)
-rainfall = st.number_input("🌧 Rainfall (mm)", value=202.0)
-
-predict = st.button("🚀 Recommend Best Crop")
-
-st.markdown("</div>", unsafe_allow_html=True)
-```
-
-with col2:
-
-```
-st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
-st.markdown("### 📊 Smart Agriculture")
-st.markdown("""
-✔ Soil Analysis  
-✔ Weather Based Prediction  
-✔ AI Recommendation  
-✔ Sustainable Farming
-""")
-st.markdown("</div>", unsafe_allow_html=True)
-```
-
-# ---------- PREDICTION ----------
-
-if predict:
-
-```
-sample = pd.DataFrame([{
-    "N":N,
-    "P":P,
-    "K":K,
-    "temperature":temperature,
-    "humidity":humidity,
-    "ph":ph,
-    "rainfall":rainfall
-}])
-
-prediction = pipeline.predict(sample)
-crop = label_encoder.inverse_transform(prediction)[0]
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-st.markdown(
-    f"<div class='result-card'>🌾 Recommended Crop<br><br>{crop.upper()}</div>",
+    "<div class='main-title'>🌱 Smart Crop Recommendation System</div>",
     unsafe_allow_html=True
 )
 
-st.balloons()
-```
-
-# ---------- FOOTER ----------
-
-st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown(
-"<center style='color:white;'>Built with ❤️ using Machine Learning & Streamlit</center>",
-unsafe_allow_html=True
+    "<div class='subtitle'>AI Powered Crop Prediction using Soil & Weather Parameters</div>",
+    unsafe_allow_html=True
+)
+
+# Load Model
+try:
+    model_data = joblib.load("crop_recommendation_model.joblib")
+    pipeline = model_data["pipeline"]
+    label_encoder = model_data["label_encoder"]
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
+
+# Layout
+col1, col2 = st.columns([1.2, 1])
+
+with col1:
+    st.markdown("<div class='glass'>", unsafe_allow_html=True)
+
+    st.subheader("🌾 Enter Farm Details")
+
+    N = st.slider("Nitrogen (N)", 0, 140, 90)
+    P = st.slider("Phosphorus (P)", 0, 140, 42)
+    K = st.slider("Potassium (K)", 0, 140, 43)
+
+    temperature = st.number_input("🌡 Temperature (°C)", value=20.8)
+    humidity = st.number_input("💧 Humidity (%)", value=82.0)
+    ph = st.number_input("⚗ Soil pH", value=6.5)
+    rainfall = st.number_input("🌧 Rainfall (mm)", value=202.0)
+
+    predict = st.button("🚀 Recommend Best Crop")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
+
+    st.markdown("### 📊 Smart Agriculture")
+
+    st.markdown("""
+    ✔ Soil Analysis
+
+    ✔ Weather-Based Prediction
+
+    ✔ AI Recommendation
+
+    ✔ Sustainable Farming
+    """)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Prediction
+if predict:
+    sample = pd.DataFrame([{
+        "N": N,
+        "P": P,
+        "K": K,
+        "temperature": temperature,
+        "humidity": humidity,
+        "ph": ph,
+        "rainfall": rainfall
+    }])
+
+    prediction = pipeline.predict(sample)
+    crop = label_encoder.inverse_transform(prediction)[0]
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown(
+        f"<div class='result-card'>🌾 Recommended Crop<br><br>{crop.upper()}</div>",
+        unsafe_allow_html=True
+    )
+
+    st.balloons()
+
+# Footer
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+st.markdown(
+    "<center style='color:white;'>Built with ❤️ using Machine Learning & Streamlit</center>",
+    unsafe_allow_html=True
 )
