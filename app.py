@@ -1,113 +1,217 @@
-import os
+import streamlit as st
 import joblib
-import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, classification_report
 
-DATA_PATH = "Crop_recommendation.csv"
-MODEL_PATH = "crop_recommendation_model.joblib"
+# ================= PAGE CONFIG =================
+st.set_page_config(
+    page_title="Crop Recommendation",
+    page_icon="🌱",
+    layout="wide"
+)
 
+# ================= CSS =================
+st.markdown("""
+<style>
 
-def load_dataset(path: str) -> pd.DataFrame:
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Dataset not found at '{path}'")
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    df = pd.read_csv(path)
-    if "label" not in df.columns:
-        raise ValueError("Expected dataset to contain a 'label' column")
+html, body, [class*="css"]{
+    font-family:'Poppins',sans-serif;
+}
 
-    return df
+/* Background */
+.stApp{
+background:
+radial-gradient(circle at top left, rgba(34,197,94,0.25), transparent 30%),
+radial-gradient(circle at bottom right, rgba(132,204,22,0.20), transparent 30%),
+linear-gradient(
+135deg,
+#041c12 0%,
+#0b3d20 30%,
+#14532d 70%,
+#052e16 100%
+);
+}
 
+/* Hide Streamlit Branding */
+#MainMenu {visibility:hidden;}
+footer {visibility:hidden;}
+header {visibility:hidden;}
 
-def prepare_data(df: pd.DataFrame):
-    X = df.drop(columns=["label"])
-    y = df["label"]
-    return X, y
+/* Glass Container */
+.block-container{
+padding-top:2rem;
+}
 
+/* Labels */
+label{
+color:white !important;
+font-weight:600 !important;
+}
 
-def build_pipeline():
-    return Pipeline(
-        [
-            ("scaler", StandardScaler()),
-            ("classifier", RandomForestClassifier(n_estimators=200, random_state=42))
-        ]
-    )
+/* Inputs */
+.stNumberInput input{
+background:white !important;
+color:#14532d !important;
+border-radius:15px !important;
+border:2px solid #22c55e !important;
+font-weight:600 !important;
+}
 
+/* Button */
+.stButton button{
+width:100%;
+height:60px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:white;
+font-size:20px;
+font-weight:700;
+}
 
-def train_model(X: pd.DataFrame, y: pd.Series):
-    label_encoder = LabelEncoder()
-    y_encoded = label_encoder.fit_transform(y)
+.stButton button:hover{
+transform:scale(1.02);
+}
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
-    )
+/* Subheaders */
+h3{
+color:white !important;
+}
 
-    model = build_pipeline()
-    model.fit(X_train, y_train)
+</style>
+""", unsafe_allow_html=True)
 
-    y_pred = model.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
+# ================= HERO =================
+st.markdown("""
+<div style="
+background:linear-gradient(135deg,#22c55e,#15803d);
+padding:35px;
+border-radius:25px;
+text-align:center;
+margin-bottom:25px;
+box-shadow:0px 8px 30px rgba(0,0,0,0.25);
+">
+<h1 style="color:white;margin:0;">
+🌾 Smart Crop Recommendation
+</h1>
+<p style="color:white;font-size:18px;margin-top:10px;">
+AI Powered Farming Assistant for Better Yield & Smart Agriculture
+</p>
+</div>
+""", unsafe_allow_html=True)
 
-    print("Model training completed")
-    print(f"Accuracy: {accuracy:.4f}")
-    print("Classification report:\n", classification_report(y_test, y_pred, target_names=label_encoder.classes_))
+# ================= STATS =================
+col1, col2, col3 = st.columns(3)
 
-    return model, label_encoder
+with col1:
+    st.metric("🌱 Supported Crops", "22+")
 
+with col2:
+    st.metric("🎯 Model Accuracy", "99%")
 
-def save_model(model, label_encoder, feature_names, path: str):
-    payload = {"pipeline": model, "label_encoder": label_encoder, "feature_names": list(feature_names)}
-    joblib.dump(payload, path)
-    print(f"Saved trained model to '{path}'")
+with col3:
+    st.metric("📊 Parameters Used", "7")
 
+st.markdown("<br>", unsafe_allow_html=True)
 
-def load_model(path: str):
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Model file not found at '{path}'")
-    return joblib.load(path)
+# ================= CROP CARDS =================
+st.markdown("### 🌾 Popular Crops")
 
+c1, c2, c3, c4 = st.columns(4)
 
-def predict_crop(sample: dict, model_payload: dict) -> str:
-    model = model_payload["pipeline"]
-    label_encoder = model_payload["label_encoder"]
+with c1:
+    st.markdown("""
+    <div style="background:rgba(255,255,255,0.1);
+    padding:25px;border-radius:20px;text-align:center;color:white;">
+    🌾<br><h4>Rice</h4>
+    </div>
+    """, unsafe_allow_html=True)
 
-    feature_names = model_payload.get("feature_names")
-    sample_df = pd.DataFrame([sample])
-    if feature_names is not None:
-        missing = [c for c in feature_names if c not in sample_df.columns]
-        if missing:
-            raise ValueError(f"Missing feature(s) for prediction: {missing}")
-        # Reorder columns to match training
-        sample_df = sample_df[feature_names]
+with c2:
+    st.markdown("""
+    <div style="background:rgba(255,255,255,0.1);
+    padding:25px;border-radius:20px;text-align:center;color:white;">
+    🌽<br><h4>Maize</h4>
+    </div>
+    """, unsafe_allow_html=True)
 
-    prediction = model.predict(sample_df)
-    return label_encoder.inverse_transform(prediction)[0]
+with c3:
+    st.markdown("""
+    <div style="background:rgba(255,255,255,0.1);
+    padding:25px;border-radius:20px;text-align:center;color:white;">
+    🌿<br><h4>Cotton</h4>
+    </div>
+    """, unsafe_allow_html=True)
 
+with c4:
+    st.markdown("""
+    <div style="background:rgba(255,255,255,0.1);
+    padding:25px;border-radius:20px;text-align:center;color:white;">
+    🌻<br><h4>Sunflower</h4>
+    </div>
+    """, unsafe_allow_html=True)
 
-def main():
-    df = load_dataset(DATA_PATH)
-    X, y = prepare_data(df)
-    model, label_encoder = train_model(X, y)
-    save_model(model, label_encoder, X.columns, MODEL_PATH)
+st.markdown("<br>", unsafe_allow_html=True)
 
-    example_input = {
-        "N": 90,
-        "P": 42,
-        "K": 43,
-        "temperature": 20.8,
-        "humidity": 82.0,
-        "ph": 6.5,
-        "rainfall": 202.0,
-    }
+# ================= LOAD MODEL =================
+model_data = joblib.load("crop_recommendation_model.joblib")
 
-    saved_payload = load_model(MODEL_PATH)
-    predicted_crop = predict_crop(example_input, saved_payload)
-    print(f"\nExample prediction for sample:\n{example_input}\n=> Recommended crop: {predicted_crop}")
+pipeline = model_data["pipeline"]
+label_encoder = model_data["label_encoder"]
 
+# ================= INPUTS =================
+st.markdown("### 🧪 Soil & Weather Details")
 
-if __name__ == "__main__":
-    main()
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    N = st.number_input("Nitrogen (N)", 0, 200, 90)
+    temperature = st.number_input("Temperature (°C)", value=20.8)
+
+with col2:
+    P = st.number_input("Phosphorus (P)", 0, 200, 42)
+    humidity = st.number_input("Humidity (%)", value=82.0)
+
+with col3:
+    K = st.number_input("Potassium (K)", 0, 200, 43)
+    ph = st.number_input("pH Value", value=6.5)
+
+rainfall = st.number_input("Rainfall (mm)", value=202.0)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# ================= PREDICT =================
+if st.button("🚀 Recommend Best Crop"):
+
+    sample = pd.DataFrame([{
+        "N": N,
+        "P": P,
+        "K": K,
+        "temperature": temperature,
+        "humidity": humidity,
+        "ph": ph,
+        "rainfall": rainfall
+    }])
+
+    prediction = pipeline.predict(sample)
+    crop = label_encoder.inverse_transform(prediction)[0]
+
+    st.markdown(f"""
+<div style="
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,0.1);
+padding:30px;
+border-radius:25px;
+text-align:center;
+margin-top:25px;
+">
+<h2 style="color:#86efac;">🌾 Recommended Crop</h2>
+<h1 style="color:white;font-size:60px;">
+{crop.upper()}
+</h1>
+</div>
+""", unsafe_allow_html=True)
+
+   
