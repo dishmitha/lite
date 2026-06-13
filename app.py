@@ -1,6 +1,7 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import os  # ✅ added
 
 # ================= PAGE CONFIG =================
 st.set_page_config(
@@ -19,7 +20,6 @@ html, body, [class*="css"]{
     font-family:'Poppins',sans-serif;
 }
 
-/* Background */
 .stApp{
 background:
 radial-gradient(circle at top left, rgba(34,197,94,0.25), transparent 30%),
@@ -33,23 +33,19 @@ linear-gradient(
 );
 }
 
-/* Hide Streamlit Branding */
 #MainMenu {visibility:hidden;}
 footer {visibility:hidden;}
 header {visibility:hidden;}
 
-/* Glass Container */
 .block-container{
 padding-top:2rem;
 }
 
-/* Labels */
 label{
 color:white !important;
 font-weight:600 !important;
 }
 
-/* Inputs */
 .stNumberInput input{
 background:white !important;
 color:#14532d !important;
@@ -58,7 +54,6 @@ border:2px solid #22c55e !important;
 font-weight:600 !important;
 }
 
-/* Button */
 .stButton button{
 width:100%;
 height:60px;
@@ -74,7 +69,6 @@ font-weight:700;
 transform:scale(1.02);
 }
 
-/* Subheaders */
 h3{
 color:white !important;
 }
@@ -155,7 +149,8 @@ with c4:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ================= LOAD MODEL =================
-model_data = joblib.load("crop_recommendation_model.joblib")
+model_path = os.path.join(os.path.dirname(__file__), "crop_recommendation_model.joblib")  # ✅ fixed
+model_data = joblib.load(model_path)
 
 pipeline = model_data["pipeline"]
 label_encoder = model_data["label_encoder"]
@@ -213,5 +208,3 @@ margin-top:25px;
 </h1>
 </div>
 """, unsafe_allow_html=True)
-
-   
