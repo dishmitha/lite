@@ -152,6 +152,14 @@ st.markdown("<br>", unsafe_allow_html=True)
 model_path = os.path.join(os.path.dirname(__file__), "crop_recommendation_model.pkl")
 model = joblib.load(model_path)  # ✅ direct RandomForestClassifier
 
+crop_dict = {
+    1: "Rice", 2: "Maize", 3: "Chickpea", 4: "Kidneybeans", 5: "Pigeonpeas",
+    6: "Mothbeans", 7: "Mungbean", 8: "Blackgram", 9: "Lentil", 10: "Pomegranate",
+    11: "Banana", 12: "Mango", 13: "Grapes", 14: "Watermelon", 15: "Muskmelon",
+    16: "Apple", 17: "Orange", 18: "Papaya", 19: "Coconut", 20: "Cotton",
+    21: "Jute", 22: "Coffee"
+}
+
 # ================= INPUTS =================
 st.markdown("### 🧪 Soil & Weather Details")
 
@@ -173,7 +181,6 @@ rainfall = st.number_input("Rainfall (mm)", value=202.0)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ================= PREDICT =================
 if st.button("🚀 Recommend Best Crop"):
 
     sample = pd.DataFrame([{
@@ -186,9 +193,9 @@ if st.button("🚀 Recommend Best Crop"):
         "rainfall": rainfall
     }])
 
-    crop = model.predict(sample)[0]  # ✅ direct predict
-    crop=str(crop)
-    
+    prediction = model.predict(sample)[0]
+    crop = crop_dict.get(int(prediction), "Unknown")  # ✅ decode number to crop name
+
     st.markdown(f"""
 <div style="
 background:rgba(255,255,255,0.04);
