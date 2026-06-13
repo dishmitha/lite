@@ -1,7 +1,7 @@
 import streamlit as st
 import joblib
 import pandas as pd
-import os  # ✅ added
+import os
 
 # ================= PAGE CONFIG =================
 st.set_page_config(
@@ -149,11 +149,8 @@ with c4:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ================= LOAD MODEL =================
-model_path = os.path.join(os.path.dirname(__file__), "crop_recommendation_model.joblib")  # ✅ fixed
-model_data = joblib.load(model_path)
-
-pipeline = model_data["pipeline"]
-label_encoder = model_data["label_encoder"]
+model_path = os.path.join(os.path.dirname(__file__), "crop_recommendation_model.pkl")
+model = joblib.load(model_path)  # ✅ direct RandomForestClassifier
 
 # ================= INPUTS =================
 st.markdown("### 🧪 Soil & Weather Details")
@@ -189,8 +186,7 @@ if st.button("🚀 Recommend Best Crop"):
         "rainfall": rainfall
     }])
 
-    prediction = pipeline.predict(sample)
-    crop = label_encoder.inverse_transform(prediction)[0]
+    crop = model.predict(sample)[0]  # ✅ direct predict
 
     st.markdown(f"""
 <div style="
