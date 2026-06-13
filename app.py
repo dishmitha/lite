@@ -187,7 +187,8 @@ if st.button("🚀 Recommend Best Crop"):
     }])
 
     crop = model.predict(sample)[0]  # ✅ direct predict
-
+    crop=str(crop)
+    
     st.markdown(f"""
 <div style="
 background:rgba(255,255,255,0.04);
